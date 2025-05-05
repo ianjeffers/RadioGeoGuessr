@@ -118,7 +118,11 @@ export default function Home() {
           </div>
           <h2>Round {currentRound} Results</h2>
           <p><strong>Score:</strong> {result.score}</p>
-          <p><strong>Distance:</strong> {result.distance_km.toFixed(2)} km</p>
+          {typeof result?.distance_km === 'number' ? (
+            <p><strong>Distance:</strong> {result.distance_km.toFixed(2)} km</p>
+          ) : (
+            <p><strong>Distance:</strong> N/A</p>
+          )}
           <div>
             <h3>Reveal Hints</h3>
             <p><strong>Recorded:</strong> {result.reveals.timestamp}</p>

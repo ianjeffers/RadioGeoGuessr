@@ -15,7 +15,7 @@ let stationDensityCenters: { lat: number; lon: number }[] = [];
 let lastFetched = 0;
 const FETCH_INTERVAL = 12 * 60 * 60 * 1000;
 
-// Haversine formula to compute distance between coords
+//duplicate code I'll probably never fix
 function distanceKm(a: { lat: number; lon: number }, b: { lat: number; lon: number }): number {
   const toRad = (x: number) => (x * Math.PI) / 180;
   const R = 6371; // Earth radius
