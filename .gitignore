@@ -42,4 +42,4 @@ next-env.d.ts
 
 public/mock-clips
 public/mock/*
-data/clipcache.db
+data
