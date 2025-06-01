@@ -35,9 +35,24 @@ export async function fetchStations(): Promise<void> {
   if (stations.length > 0 && now - lastFetched < FETCH_INTERVAL) {
     return;
   }
-  const res = await fetch('https://de1.api.radio-browser.info/json/stations');
-  const data = await res.json();
+
+  let res;
+  let data;
+  try {
+    res = await fetch('https://de2.api.radio-browser.info/json/stations');
+    data = await res.json();
+  } catch (e) {
+    console.log("De2 is down... trying fallback");
+    res = false;
+  }
+
+  //Failing on second fallback
+  if (!res) {
+    res = await fetch('https://de1.api.radio-browser.info/json/stations');
+    data = await res.json();
+  }
   console.log('Fetched station JSON:', Array.isArray(data) ? `Array of ${data.length}` : typeof data);
+  lastFetched = Date.now();
   if (Array.isArray(data)) {
     stations = data
       .filter((s: any) => s.url_resolved && s.geo_lat && s.geo_long)
@@ -53,8 +68,6 @@ export async function fetchStations(): Promise<void> {
     // Precompute station density centers (grid clusters). May need some tuning but appears functional
     const grid = new Map<string, number>();
     for (const s of stations) {
-      const latBin = Math.round(s.lat);
-      const lonBin = Math.round(s.lon);
       const key = `${Math.round(s.lat / 3) * 3},${Math.round(s.lon / 3) * 3}`;
       grid.set(key, (grid.get(key) || 0) + 1);
     }
@@ -84,5 +97,13 @@ export function getStationsInRadius(
   center: { lat: number; lon: number },
   radiusKm: number
 ): Station[] {
-  return stations.filter(s => distanceKm({ lat: s.lat, lon: s.lon }, center) <= radiusKm);
+  const seen = new Set<string>();
+
+  return stations
+    .filter(s => distanceKm({ lat: s.lat, lon: s.lon }, center) <= radiusKm)
+    .filter(s => {
+      if (seen.has(s.id)) return false;
+      seen.add(s.id);
+      return true;
+    });
 }

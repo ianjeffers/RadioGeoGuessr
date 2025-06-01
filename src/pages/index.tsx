@@ -84,7 +84,7 @@ export default function Home() {
 
   return (
     <div style={{ maxWidth: 800, margin: '2rem auto', fontFamily: 'Arial, sans-serif' }}>
-      <h1>Radio GeoGuessr (Mock)</h1>
+      <h1>RadioGuessr</h1>
       {clips.length === 0 && (
         <button onClick={handleStart} style={{ padding: '0.5rem 1rem' }}>
           Start Game
